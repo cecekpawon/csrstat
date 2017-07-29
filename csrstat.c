@@ -65,7 +65,7 @@ main (
         int   argc,
   const char  *argv[]
 ) {
-  bool      custom = 0, internal = 0;
+  bool      custom = 0, internal = 0, devcfg = 0;
   char      *status;
   uint32_t  config = 0;
   int       statcfg;
@@ -138,6 +138,7 @@ main (
 
   switch (config) {
     case 0x0:
+      internal = 1;
       status = "enable";
       break;
 
@@ -146,6 +147,7 @@ main (
       break;
 
     case CSR_VALID_FLAGS:
+      devcfg = 1;
       custom = 1;
       status = "disabled (Custom Configuration)";
       break;
@@ -161,7 +163,6 @@ main (
       break;
 
     default:
-      internal = ((config & CSR_ALLOW_APPLE_INTERNAL) != 0) ? 1 : 0;
       custom = 1;
       status = "enabled (Custom Configuration)";
   }
@@ -170,16 +171,16 @@ main (
 
   printf ("Configuration: (0x%08x)\n", config);
 
-  printf ("\tApple Internal...........: %s\n", internal ? "enabled" : "disabled");
-  printf ("\tKext Signing Restrictions: %s\n", _csr_check(CSR_ALLOW_UNTRUSTED_KEXTS));
-  printf ("\tTask for PID Restrictions: %s\n", _csr_check(CSR_ALLOW_TASK_FOR_PID));
-  printf ("\tFilesystem Protections...: %s\n", _csr_check(CSR_ALLOW_UNRESTRICTED_FS));
-  printf ("\tDebugging Restrictions...: %s\n", _csr_check(CSR_ALLOW_KERNEL_DEBUGGER));
-  printf ("\tDTrace Restrictions......: %s\n", _csr_check(CSR_ALLOW_UNRESTRICTED_DTRACE));
-  printf ("\tNVRAM Protections........: %s\n", _csr_check(CSR_ALLOW_UNRESTRICTED_NVRAM));
-  printf ("\tDevice Configuration.....: %s\n", _csr_check(CSR_ALLOW_DEVICE_CONFIGURATION));
-  printf ("\tBaseSystem Verification..: %s\n", _csr_check(CSR_ALLOW_ANY_RECOVERY_OS));
-  //printf ("\tApple Internal HS........: %s\n", _csr_check(CSR_ALLOW_APPLE_INTERNAL_HS));
+  printf ("\tApple Internal ...................... : %s\n", internal ? "enabled" : _csr_check (CSR_ALLOW_APPLE_INTERNAL));
+  printf ("\tKext Signing Restrictions ........... : %s\n", _csr_check (CSR_ALLOW_UNTRUSTED_KEXTS));
+  printf ("\tTask for PID Restrictions ........... : %s\n", _csr_check (CSR_ALLOW_TASK_FOR_PID));
+  printf ("\tFilesystem Protections .............. : %s\n", _csr_check (CSR_ALLOW_UNRESTRICTED_FS));
+  printf ("\tDebugging Restrictions .............. : %s\n", _csr_check (CSR_ALLOW_KERNEL_DEBUGGER));
+  printf ("\tDTrace Restrictions ................. : %s\n", _csr_check (CSR_ALLOW_UNRESTRICTED_DTRACE));
+  printf ("\tNVRAM Protections ................... : %s\n", _csr_check (CSR_ALLOW_UNRESTRICTED_NVRAM));
+  printf ("\tDevice Configuration Restrictions ... : %s\n", devcfg ? "enabled" : _csr_check (CSR_ALLOW_DEVICE_CONFIGURATION));
+  printf ("\tBaseSystem Verification ............. : %s\n", _csr_check (CSR_ALLOW_ANY_RECOVERY_OS));
+  //printf ("\tApple Internal HS .................. : %s\n", _csr_check(CSR_ALLOW_APPLE_INTERNAL_HS));
 
   if (custom) {
     printf("\nThis is an unsupported configuration, likely to break in the future and leave your machine in an unknown state.\n");
